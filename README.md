@@ -4,7 +4,7 @@ Projet chatbot Frontend + Backend initialise avec Vite (frontend) et Express (ba
 
 Le frontend affiche l'interface de chat, et le backend relaie les messages vers OpenRouter pour obtenir des reponses de modele IA.
 
-## Apercu
+## Aperçu
 
 ![Apercu du chatbot](Adobe%20Express%20-%20AI-chatbot.gif)
 
