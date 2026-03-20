@@ -22,110 +22,118 @@
       <div class="orb orb-4"></div>
     </div>
 
-    <!-- CARTE PRINCIPALE -->
-    <main class="chat-card">
-      <!-- ── HEADER ── -->
-      <header class="chat-header">
-        <div class="header-left">
-          <!-- Avatar animé du bot -->
-          <div class="bot-avatar" aria-hidden="true">
-            <span class="avatar-emoji">🌸</span>
-            <span class="online-dot"></span>
-          </div>
-          <div class="header-info">
-            <h1 class="chat-title">Petal</h1>
-            <p class="chat-subtitle" id="header-status">
-              En ligne · prêt à vous aider
-            </p>
-          </div>
-        </div>
-        <!-- Bouton toggle mode sombre -->
-        <button
-          class="theme-btn"
-          id="theme-toggle"
-          aria-label="Basculer le thème"
-          title="Mode sombre / clair"
-        >
-          <span class="theme-icon" id="theme-icon">🌙</span>
-        </button>
-      </header>
+    <!-- SHELL PRINCIPAL : sidebar + chat -->
+    <div class="app-shell">
 
-      <!-- ── ZONE MESSAGES ── -->
-      <section
-        class="messages-area"
-        id="messages-area"
-        role="log"
-        aria-live="polite"
-        aria-label="Conversation avec Petal"
-      >
-        <!-- Message de bienvenue injecté via JS au chargement -->
-      </section>
-
-      <!-- ── ZONE SAISIE ── -->
-      <footer class="input-area">
-        <!-- Chips de suggestions rapides -->
-        <div class="chips-row" id="chips-row" aria-label="Suggestions rapides">
-          <button class="chip" data-text="Bonjour Petal ! 🌸">
-            Dire bonjour
-          </button>
-          <button class="chip" data-text="Quelles sont tes capacités ?">
-            Tes capacités
-          </button>
-          <button class="chip" data-text="Raconte-moi une blague 😄">
-            Une blague
-          </button>
-          <button class="chip" data-text="Donne-moi un conseil de bien-être 🌿">
-            Bien-être
+      <!-- ══ SIDEBAR HISTORIQUE ══ -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Historique 🌸</div>
+          <button class="new-conv-btn" id="new-conv-btn">
+            <span aria-hidden="true">✦</span> Nouvelle conversation
           </button>
         </div>
+        <div class="conv-list" id="conv-list">
+          <!-- Rempli dynamiquement par JS -->
+        </div>
+      </aside>
 
-        <!-- Champ de saisie -->
-        <div class="input-row">
-          <!-- Avatar utilisateur -->
-          <div class="user-avatar" aria-hidden="true">👹</div>
+      <!-- ══ CARTE CHAT ══ -->
+      <main class="chat-card">
 
-          <div class="input-wrapper" id="input-wrapper">
-            <textarea
-              id="chat-input"
-              rows="1"
-              placeholder="Écrivez un message…"
-              aria-label="Saisie du message"
-              autocomplete="off"
-              spellcheck="true"
-            ></textarea>
-            <button id="send-btn" aria-label="Envoyer le message" disabled>
-              <!-- Icône avion en papier SVG -->
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  d="M22 2L11 13"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M22 2L15 22L11 13L2 9L22 2Z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+        <!-- ── HEADER ── -->
+        <header class="chat-header">
+          <!-- Hamburger (mobile uniquement) -->
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Ouvrir l'historique">
+            ☰
+          </button>
+
+          <div class="header-left">
+            <!-- Avatar animé du bot -->
+            <div class="bot-avatar" aria-hidden="true">
+              <span class="avatar-emoji">🌸</span>
+              <span class="online-dot"></span>
+            </div>
+            <div class="header-info">
+              <h1 class="chat-title">Petal</h1>
+              <p class="chat-subtitle" id="header-status">
+                En ligne · prêt à vous aider
+              </p>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <!-- Bouton toggle mode sombre -->
+            <button
+              class="theme-btn"
+              id="theme-toggle"
+              aria-label="Basculer le thème"
+              title="Mode sombre / clair"
+            >
+              <span class="theme-icon" id="theme-icon">🌙</span>
+            </button>
+            <!-- Nouvelle conversation (icône corbeille) -->
+            <button
+              class="theme-btn"
+              id="clear-btn"
+              aria-label="Nouvelle conversation"
+              title="Nouvelle conversation"
+            >
+              🗑
             </button>
           </div>
-        </div>
+        </header>
 
-        <p class="input-hint">
-          <kbd>Entrée</kbd> pour envoyer · <kbd>Maj+Entrée</kbd> pour sauter une
-          ligne
-        </p>
-      </footer>
-    </main>
+        <!-- ── ZONE MESSAGES ── -->
+        <section
+          class="messages-area"
+          id="messages-area"
+          role="log"
+          aria-live="polite"
+          aria-label="Conversation avec Petal"
+        >
+          <!-- Injecté via JS -->
+        </section>
+
+        <!-- ── ZONE SAISIE ── -->
+        <footer class="input-area">
+          <!-- Chips de suggestions rapides -->
+          <div class="chips-row" id="chips-row" aria-label="Suggestions rapides">
+            <button class="chip" data-text="Bonjour Petal ! 🌸">Dire bonjour</button>
+            <button class="chip" data-text="Quelles sont tes capacités ?">Tes capacités</button>
+            <button class="chip" data-text="Raconte-moi une blague 😄">Une blague</button>
+            <button class="chip" data-text="Donne-moi un conseil de bien-être 🌿">Bien-être</button>
+          </div>
+
+          <!-- Champ de saisie -->
+          <div class="input-row">
+            <div class="user-avatar" aria-hidden="true">👹</div>
+
+            <div class="input-wrapper" id="input-wrapper">
+              <textarea
+                id="chat-input"
+                rows="1"
+                placeholder="Écrivez un message…"
+                aria-label="Saisie du message"
+                autocomplete="off"
+                spellcheck="true"
+              ></textarea>
+              <button id="send-btn" aria-label="Envoyer le message" disabled>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <p class="input-hint">
+            <kbd>Entrée</kbd> pour envoyer · <kbd>Maj+Entrée</kbd> pour sauter une ligne
+          </p>
+        </footer>
+
+      </main>
+    </div><!-- /.app-shell -->
 
     <script src="src/main.js" type="module"></script>
   </body>
