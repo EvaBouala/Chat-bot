@@ -11,19 +11,14 @@ const convList = document.getElementById("conv-list");
 const sidebarEl = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebar-toggle");
 
-
-const LS_CONVS = "petal_conversations"; // tableau de toutes les conversations
-const LS_ACTIVE = "petal_active_conv"; // id de la conversation courante
-const LS_THEME = "petal_theme"; // thÃ¨me clair/sombre
-const LS_MEMORY = "petal_global_memory"; // memoire globale cross-conversations
-const LS_MEMORY_LEGACY = "petal_memory"; // ancienne cle eventuelle
-
+const LS_CONVS = "petal_conversations";
+const LS_ACTIVE = "petal_active_conv";
+const LS_THEME = "petal_theme";
+const LS_MEMORY = "petal_global_memory";
+const LS_MEMORY_LEGACY = "petal_memory";
 
 let isBotTyping = false;
-let activeId = null; // id de la conversation affichÃ©e
-
-
-
+let activeId = null;
 
 function loadConvs() {
   try {
@@ -33,11 +28,9 @@ function loadConvs() {
   }
 }
 
-
 function saveConvs(convs) {
   localStorage.setItem(LS_CONVS, JSON.stringify(convs));
 }
-
 
 function loadGlobalMemory() {
   try {
@@ -62,11 +55,9 @@ function loadGlobalMemory() {
   }
 }
 
-
 function saveGlobalMemory(facts) {
   localStorage.setItem(LS_MEMORY, JSON.stringify(facts));
 }
-
 
 function addGlobalFacts(facts) {
   if (!facts.length) return;
@@ -98,7 +89,6 @@ function normalizeFact(text) {
     .replace(/\s+/g, " ")
     .trim();
 }
-
 
 function extractFactsFromUserText(text) {
   const input = String(text || "").trim();
@@ -188,19 +178,18 @@ function buildGlobalConversationContext() {
       : [];
     msgs.forEach((m) => {
       if (!m || typeof m.content !== "string") return;
-      const role = m.role === "assistant" ? "Assistant" : "Utilisateur";
+      if (m.role !== "user") return;
+      const role = "Utilisateur";
       lines.push(`${title} - ${role}: ${m.content.slice(0, 160)}`);
     });
   });
 
-  return lines.slice(-10);
+  return lines.slice(-8);
 }
-
 
 function getConv(id) {
   return loadConvs().find((c) => c.id === id) || null;
 }
-
 
 function upsertConv(conv) {
   const convs = loadConvs();
@@ -210,15 +199,12 @@ function upsertConv(conv) {
   saveConvs(convs);
 }
 
-
 function deleteConv(id) {
   saveConvs(loadConvs().filter((c) => c.id !== id));
 }
 
-
 const genId = () =>
   `conv_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
 
 function fmtDate(iso) {
   const d = new Date(iso);
@@ -238,7 +224,6 @@ function fmtDate(iso) {
   });
 }
 
-
 function formatTime(date) {
   return new Date(date).toLocaleTimeString("fr-FR", {
     hour: "2-digit",
@@ -246,11 +231,8 @@ function formatTime(date) {
   });
 }
 
-
 const escHtml = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-
 
 function renderText(text) {
   const escaped = text
@@ -265,7 +247,6 @@ function scrollToBottom() {
   messagesArea.scrollTo({ top: messagesArea.scrollHeight, behavior: "smooth" });
 }
 
-
 function appendMessage(role, text, ts, animate = true) {
   const row = document.createElement("div");
   row.classList.add("msg-row", role);
@@ -273,7 +254,7 @@ function appendMessage(role, text, ts, animate = true) {
 
   const avatar = document.createElement("div");
   avatar.classList.add("msg-avatar", role === "bot" ? "bot-av" : "user-av");
-  avatar.textContent = role === "bot" ? "ðŸŒ¸" : "ðŸ‘¹";
+  avatar.textContent = role === "bot" ? "🌸" : "👹";
   avatar.setAttribute("aria-hidden", "true");
 
   const group = document.createElement("div");
@@ -302,7 +283,7 @@ function showTyping() {
 
   const avatar = document.createElement("div");
   avatar.classList.add("msg-avatar", "bot-av");
-  avatar.textContent = "ðŸŒ¸";
+  avatar.textContent = "🌸";
 
   const bubble = document.createElement("div");
   bubble.classList.add("typing-bubble");
@@ -315,17 +296,15 @@ function showTyping() {
   row.appendChild(avatar);
   row.appendChild(bubble);
   messagesArea.appendChild(row);
-  headerStatus.textContent = "Petal Ã©critâ€¦";
+  headerStatus.textContent = "Petal ecrit...";
   scrollToBottom();
 }
 
 function hideTyping() {
   const el = document.getElementById("typing-indicator");
   if (el) el.remove();
-  headerStatus.textContent = "En ligne Â· prÃªt Ã  vous aider";
+  headerStatus.textContent = "En ligne - pret a vous aider";
 }
-
-
 
 function renderWelcome() {
   messagesArea.innerHTML = "";
@@ -333,9 +312,9 @@ function renderWelcome() {
   wrap.className = "welcome-wrap";
   wrap.id = "welcome-screen";
   wrap.innerHTML = `
-    <div class="welcome-icon" aria-hidden="true">ðŸŒ¸</div>
+    <div class="welcome-icon" aria-hidden="true">🌸</div>
     <div class="welcome-title">Bonjour, je suis Petal</div>
-    <p class="welcome-sub">Je suis connectÃ©e Ã  OpenRouter. Ã‰cris un message pour dÃ©marrer une vraie conversation.</p>
+    <p class="welcome-sub">Je suis connectee a OpenRouter. Ecris un message pour demarrer une vraie conversation.</p>
   `;
   messagesArea.appendChild(wrap);
 }
@@ -356,7 +335,6 @@ function dismissWelcome() {
   }
 }
 
-
 function restoreChips() {
   if (document.getElementById("chips-row")) return;
   const chips = document.createElement("div");
@@ -364,10 +342,10 @@ function restoreChips() {
   chips.id = "chips-row";
   chips.setAttribute("aria-label", "Suggestions rapides");
   chips.innerHTML = `
-    <button class="chip" data-text="Bonjour Petal ! ðŸŒ¸">Dire bonjour</button>
-    <button class="chip" data-text="Quelles sont tes capacitÃ©s ?">Tes capacitÃ©s</button>
-    <button class="chip" data-text="Raconte-moi une blague ðŸ˜„">Une blague</button>
-    <button class="chip" data-text="Donne-moi un conseil de bien-Ãªtre ðŸŒ¿">Bien-Ãªtre</button>
+    <button class="chip" data-text="Bonjour Petal ! 🌸">Dire bonjour</button>
+    <button class="chip" data-text="Quelles sont tes capacites ?">Tes capacites</button>
+    <button class="chip" data-text="Raconte-moi une blague">Une blague</button>
+    <button class="chip" data-text="Donne-moi un conseil de bien-etre">Bien-etre</button>
   `;
   document.querySelector(".input-area").prepend(chips);
   bindChips(chips);
@@ -383,9 +361,6 @@ function bindChips(container) {
   });
 }
 
-
-
-
 function newConversation() {
   if (isBotTyping) return;
 
@@ -395,8 +370,8 @@ function newConversation() {
     id: activeId,
     title: "Nouvelle conversation",
     updatedAt: new Date().toISOString(),
-    uiMessages: [], // pour l'affichage (role, text, ts)
-    apiMessages: [], // pour l'API (role, content)
+    uiMessages: [],
+    apiMessages: [],
   });
 
   messagesArea.innerHTML = "";
@@ -406,7 +381,6 @@ function newConversation() {
   closeSidebarMobile();
   chatInput.focus();
 }
-
 
 function loadConversation(id) {
   if (isBotTyping) return;
@@ -436,13 +410,11 @@ function loadConversation(id) {
   chatInput.focus();
 }
 
-
 function removeConversation(id) {
   deleteConv(id);
   if (id === activeId) newConversation();
   else renderSidebar();
 }
-
 
 function persistMessage(role, text, ts, apiContent) {
   const conv = getConv(activeId) || {
@@ -456,7 +428,7 @@ function persistMessage(role, text, ts, apiContent) {
     role === "user" &&
     conv.uiMessages.filter((m) => m.role === "user").length === 0
   ) {
-    conv.title = text.length > 42 ? text.slice(0, 40) + "â€¦" : text;
+    conv.title = text.length > 42 ? text.slice(0, 40) + "..." : text;
   }
 
   conv.uiMessages.push({ role, text, ts });
@@ -467,10 +439,8 @@ function persistMessage(role, text, ts, apiContent) {
   conv.updatedAt = new Date().toISOString();
 
   upsertConv(conv);
-  renderSidebar(); // met Ã  jour le titre et la date dans la sidebar
+  renderSidebar();
 }
-
-
 
 function renderSidebar() {
   const convs = loadConvs();
@@ -479,7 +449,7 @@ function renderSidebar() {
   if (convs.length === 0) {
     const empty = document.createElement("div");
     empty.className = "conv-empty";
-    empty.textContent = "Aucune conversation pour l'instant ðŸŒ¸";
+    empty.textContent = "Aucune conversation pour l'instant 🌸";
     convList.appendChild(empty);
     return;
   }
@@ -488,12 +458,12 @@ function renderSidebar() {
     const item = document.createElement("div");
     item.className = `conv-item${conv.id === activeId ? " active" : ""}`;
     item.innerHTML = `
-      <span class="conv-icon">ðŸŒ¸</span>
+      <span class="conv-icon">🌸</span>
       <div class="conv-info">
         <div class="conv-title">${escHtml(conv.title)}</div>
         <div class="conv-date">${conv.updatedAt ? fmtDate(conv.updatedAt) : ""}</div>
       </div>
-      <button class="conv-del" title="Supprimer" data-id="${conv.id}">âœ•</button>
+      <button class="conv-del" title="Supprimer" data-id="${conv.id}">x</button>
     `;
 
     item.addEventListener("click", (e) => {
@@ -509,8 +479,6 @@ function renderSidebar() {
     convList.appendChild(item);
   });
 }
-
-
 
 function closeSidebarMobile() {
   if (window.innerWidth <= 640) sidebarEl.classList.remove("open");
@@ -531,8 +499,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-
-
 async function askBackend(message) {
   const conv = getConv(activeId);
   const history = conv?.apiMessages?.length
@@ -551,8 +517,6 @@ async function askBackend(message) {
   return data;
 }
 
-
-
 async function sendMessage() {
   const text = chatInput.value.trim();
   if (!text || isBotTyping) return;
@@ -560,7 +524,7 @@ async function sendMessage() {
   dismissWelcome();
 
   const userTs = new Date().toISOString();
-  persistMessage("user", text, userTs); // sauvegarde + mÃ j sidebar
+  persistMessage("user", text, userTs);
   addGlobalFacts(extractFactsFromUserText(text));
   appendMessage("user", text, userTs);
 
@@ -572,23 +536,21 @@ async function sendMessage() {
 
   try {
     const data = await askBackend(text);
-    const reply = data?.reply || "Pas de rÃ©ponse du modÃ¨le.";
+    const reply = data?.reply || "Pas de reponse du modele.";
 
     const botTs = new Date().toISOString();
-    persistMessage("bot", reply, botTs); // sauvegarde la rÃ©ponse
+    persistMessage("bot", reply, botTs);
     appendMessage("bot", reply, botTs);
   } catch (error) {
-    const msg = error?.message || "Erreur rÃ©seau";
+    const msg = error?.message || "Erreur reseau";
     const botTs = new Date().toISOString();
-    appendMessage("bot", `âš ï¸ Erreur : ${msg}`, botTs);
+    appendMessage("bot", `Erreur: ${msg}`, botTs);
   } finally {
     hideTyping();
     isBotTyping = false;
     chatInput.focus();
   }
 }
-
-
 
 chatInput.addEventListener("input", () => {
   sendBtn.disabled = chatInput.value.trim().length === 0;
@@ -615,16 +577,15 @@ themeToggle.addEventListener("click", () => {
   const isDark = html.getAttribute("data-theme") === "dark";
   const newTheme = isDark ? "light" : "dark";
   html.setAttribute("data-theme", newTheme);
-  themeIcon.textContent = isDark ? "ðŸŒ™" : "â˜€ï¸";
+  themeIcon.textContent = isDark ? "🌙" : "☀️";
   localStorage.setItem(LS_THEME, newTheme);
 });
-
 
 (function init() {
   const savedTheme = localStorage.getItem(LS_THEME);
   if (savedTheme) {
     document.documentElement.setAttribute("data-theme", savedTheme);
-    themeIcon.textContent = savedTheme === "dark" ? "â˜€ï¸" : "ðŸŒ™";
+    themeIcon.textContent = savedTheme === "dark" ? "☀️" : "🌙";
   }
 
   const savedId = localStorage.getItem(LS_ACTIVE);
@@ -642,4 +603,3 @@ themeToggle.addEventListener("click", () => {
 
   chatInput.focus();
 })();
-
